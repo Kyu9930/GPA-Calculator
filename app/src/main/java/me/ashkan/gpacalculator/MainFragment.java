@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,6 +34,9 @@ public class MainFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
+
+        // Do not allow the keyboard to popup until the user clicks on the EditText
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
 
@@ -62,6 +66,7 @@ public class MainFragment extends Fragment {
         final ListView myCoursesSpinner = (ListView) rootView.findViewById(R.id.inputted_grades);
 
 
+        // Set the values for the spinners
         setSpinners(rootView);
 
         Button submitButton = (Button) rootView.findViewById(R.id.submit_button);
@@ -76,14 +81,15 @@ public class MainFragment extends Fragment {
                 double gpaValue = findGpaValue(gpaPercentage);
                 double currentGpa = Double.parseDouble(gpaTextView.getText().toString().substring(5));
                 String textToAdd = courseCode + " - " + gpaValue;
-                Log.i("INFORMATION", textToAdd + " " + gpaWeight);
 
 
                 gpaTextView.setText("GPA: " + String.valueOf(updateGpa(gpaValue, currentGpa, gpaWeight)));
 
+                // Add the new course to the list and update the Spinner
                 listItems.add(textToAdd);
                 mGPAList.notifyDataSetChanged();
 
+                // Clear the EditText text
                 courseCodeTextView.setText("");
             }
         });
@@ -92,6 +98,11 @@ public class MainFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * Set the values for both the percentage and weight Spinners
+     *
+     * @param rootView The fragment rootView
+     */
     public void setSpinners(View rootView) {
         Spinner percentageSpinner = (Spinner) rootView.findViewById(R.id.percentage);
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -136,15 +147,22 @@ public class MainFragment extends Fragment {
     }
 
 
+    /**
+     * Update the GPA given a new GPA value and course weight
+     *
+     * @param gpaValue   The GPA value of the given course
+     * @param currentGpa The current GPA
+     * @param gpaWeight  The weight of the course (0.5 or 1.0)
+     * @return the current GPA with the next GPA value added (rounded to 2 decimal places)
+     */
     public double updateGpa(double gpaValue, double currentGpa, double gpaWeight) {
-        double tempGrade = (currentGpa * gpaWeight * 2) + (gpaValue * weightFactor);
+        double tempGrade = (gpaValue * gpaWeight * 2) + (currentGpa * weightFactor);
 
         if (gpaWeight == 0.5)
             weightFactor++;
         else if (gpaWeight == 1.0)
             weightFactor += 2;
-
-        return (tempGrade / weightFactor);
+        return (Math.round((tempGrade / weightFactor) * 100.0) / 100.0);
 
     }
 }
