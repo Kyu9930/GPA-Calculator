@@ -126,10 +126,15 @@ public class MainFragment extends Fragment {
                             @Override
                             public void onDismiss(ListView listView, int[] reverseSortedPositions) {
                                 for (int position : reverseSortedPositions) {
-                                    if (position != -1) {
+                                    try {
                                         Log.i(TAG, "ListView Item Position: " + position);
                                         Log.i(TAG, "ListView Item: " + mGPAListAdapter.getItem(position));
                                         mGPAListAdapter.remove(mGPAListAdapter.getItem(position));
+                                    } catch (Exception e) {
+                                        //Temporary fix to SwipeDismissListViewTouchListener
+                                        // index of out bounds exception error.
+                                        Log.i(TAG, "HAHA, Avoided the crash!");
+                                        Log.i(TAG, e.toString());
                                     }
                                 }
                                 mGPAListAdapter.notifyDataSetChanged();
