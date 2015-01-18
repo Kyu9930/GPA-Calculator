@@ -4,27 +4,25 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 
 public class MainFragment extends Fragment {
     public int weightFactor = 0;
-    ArrayList<String> listItems;
-    ArrayAdapter<String> mGPAList;
+    public static ArrayList<String> listItems;
+    public static ArrayAdapter<String> mGPAListAdapter;
+    private static final String TAG = "MainFragment";
+
 
     public MainFragment() {
     }
@@ -63,11 +61,22 @@ public class MainFragment extends Fragment {
         final Spinner gpaPercentageSpinner = (Spinner) rootView.findViewById(R.id.percentage);
         final TextView courseCodeTextView = (TextView) rootView.findViewById(R.id.editText);
         final TextView gpaTextView = (TextView) rootView.findViewById(R.id.GPA_text_view);
-        final ListView myCoursesSpinner = (ListView) rootView.findViewById(R.id.inputted_grades);
+        final ListView myCoursesListView = (ListView) rootView.findViewById(R.id.inputted_grades);
 
 
         // Set the values for the spinners
         setSpinners(rootView);
+
+
+        ListView mainListView = (ListView) rootView.findViewById(R.id.inputted_grades);
+        listItems = new ArrayList<String>();
+        mGPAListAdapter = new ArrayAdapter<String>(
+                getActivity(), // The current context (this activity)
+                R.layout.list_item_layout, // The name of the layout ID.
+                R.id.list_item_layout_gpa, // The ID of the textview to populate.
+                listItems);
+        myCoursesListView.setAdapter(mGPAListAdapter);
+
 
         Button submitButton = (Button) rootView.findViewById(R.id.submit_button);
 
@@ -75,6 +84,8 @@ public class MainFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
+
+
                 String courseCode = courseCodeTextView.getText().toString();
                 double gpaWeight = Double.parseDouble(gpaWeightSpinner.getSelectedItem().toString());
                 String gpaPercentage = gpaPercentageSpinner.getSelectedItem().toString();
@@ -87,12 +98,47 @@ public class MainFragment extends Fragment {
 
                 // Add the new course to the list and update the Spinner
                 listItems.add(textToAdd);
-                mGPAList.notifyDataSetChanged();
+                mGPAListAdapter.notifyDataSetChanged();
 
                 // Clear the EditText text
                 courseCodeTextView.setText("");
+
+                for (String temp : listItems)
+                    Log.i(TAG, "INDEX: " + listItems.indexOf(temp) + " ITEM: " + temp);
+
             }
         });
+
+        //SwipeDismissListViewTouchListener code by Roman Nurik:
+        // https://github.com/romannurik/Android-SwipeToDismiss
+        // Create a ListView-specific touch listener. ListViews are given special treatment because
+        // by default they handle touches for their list items... i.e. they're in charge of drawing
+        // the pressed state (the list selector), handling list item clicks, etc.
+        SwipeDismissListViewTouchListener touchListener =
+                new SwipeDismissListViewTouchListener(
+                        myCoursesListView,
+                        new SwipeDismissListViewTouchListener.DismissCallbacks() {
+                            @Override
+                            public boolean canDismiss(int position) {
+                                return true;
+                            }
+
+                            @Override
+                            public void onDismiss(ListView listView, int[] reverseSortedPositions) {
+                                for (int position : reverseSortedPositions) {
+                                    if (position != -1) {
+                                        Log.i(TAG, "ListView Item Position: " + position);
+                                        Log.i(TAG, "ListView Item: " + mGPAListAdapter.getItem(position));
+                                        mGPAListAdapter.remove(mGPAListAdapter.getItem(position));
+                                    }
+                                }
+                                mGPAListAdapter.notifyDataSetChanged();
+                            }
+                        });
+        myCoursesListView.setOnTouchListener(touchListener);
+        // Setting this scroll listener is required to ensure that during ListView scrolling,
+        // we don't look for swipes.
+        myCoursesListView.setOnScrollListener(touchListener.makeScrollListener());
 
 
         return rootView;
@@ -119,16 +165,6 @@ public class MainFragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         weightSpinner.setAdapter(adapter);
-
-
-        ListView mainListView = (ListView) rootView.findViewById(R.id.inputted_grades);
-        listItems = new ArrayList<String>();
-        mGPAList = new ArrayAdapter<String>(
-                getActivity(), // The current context (this activity)
-                R.layout.list_item_layout, // The name of the layout ID.
-                R.id.list_item_layout_gpa, // The ID of the textview to populate.
-                listItems);
-        mainListView.setAdapter(mGPAList);
 
     }
 
