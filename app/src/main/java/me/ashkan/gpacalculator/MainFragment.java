@@ -18,10 +18,10 @@ import java.util.ArrayList;
 
 
 public class MainFragment extends Fragment {
-    public int weightFactor = 0;
-    public static ArrayList<String> listItems;
-    public static ArrayAdapter<String> mGPAListAdapter;
-    private static final String TAG = "MainFragment";
+    private int weightFactor = 0;
+    private ArrayList<String> listItems;
+    private ArrayAdapter<String> mGPAListAdapter;
+    private final String TAG = "MainFragment";
 
 
     public MainFragment() {
@@ -44,10 +44,7 @@ public class MainFragment extends Fragment {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -68,7 +65,6 @@ public class MainFragment extends Fragment {
         setSpinners(rootView);
 
 
-        ListView mainListView = (ListView) rootView.findViewById(R.id.inputted_grades);
         listItems = new ArrayList<String>();
         mGPAListAdapter = new ArrayAdapter<String>(
                 getActivity(), // The current context (this activity)

@@ -380,18 +380,6 @@ public class SwipeDismissListViewTouchListener implements View.OnTouchListener {
                         dismissPositions[i] = mPendingDismisses.get(i).position;
                     }
 
-//                    for (int position : dismissPositions) {
-//                            try {
-//                                MainFragment.mGPAListAdapter.getItem(position);
-//                            } catch (Exception e) {
-//                                for (int index = 0; index < dismissPositions.length; index++) {
-//                                    if (dismissPositions[index] == position) {
-//                                        dismissPositions[index] = -1;
-//                                    }
-//                                }
-//                                Log.i(TAG, "HAHA, Avoided the crash!");
-//                            }
-//                    }
                     mCallbacks.onDismiss(mListView, dismissPositions);
 
                     ViewGroup.LayoutParams lp;
