@@ -175,10 +175,11 @@ public class MainFragment extends Fragment {
      */
     public double findGpaValue(String givenPercentage) {
         double[] gpaArray = {4.0, 4.0, 3.7, 3.3, 3.0, 2.7, 2.3, 2.0, 1.7, 1.3, 1.0, 0.7, 0.0};
-        String[] percentageArray = {"90–100", "85–89", "80–84", "77–79", "73–76", "70–72", "67–69", "63–66", "60–62", "57–59", "53–56", "50-52", "0–49"};
+        String[] percentageArray = {"90–100", "85–89", "80–84", "77–79", "73–76", "70–72", "67–69", "63–66", "60–62", "57–59", "53–56", "50–52", "0–49"};
         for (int index = 0; index < gpaArray.length; index++)
             if (givenPercentage.equals(percentageArray[index]))
                 return gpaArray[index];
+
 
         return -1;
     }
