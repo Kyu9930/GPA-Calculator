@@ -2,6 +2,7 @@ package me.ashkan.gpacalculator;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -11,11 +12,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
-public class GPAActivity extends ActionBarActivity {
+public class GpaActivity extends ActionBarActivity {
+    private final String TAG = "GpaActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle("Settings");
         setContentView(R.layout.activity_gpa);
 
         addData();
@@ -71,7 +74,42 @@ public class GPAActivity extends ActionBarActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+        if (id == R.id.home) {
+            finish();
+        }
 
         return super.onOptionsItemSelected(item);
     }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.i(TAG, "onStart()");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i(TAG, "onResume()");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.i(TAG, "onPause()");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.i(TAG, "onStop()");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.i(TAG, "onDestroy()");
+    }
+
 }

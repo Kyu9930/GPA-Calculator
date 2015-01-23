@@ -15,16 +15,21 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 
 public class MainFragment extends Fragment {
-    private int weightFactor = 0;
+    private final String TAG = "MainFragment";
+
+    private int weightFactor;
     private ArrayList<String> listItems;
     private ArrayAdapter<String> mGPAListAdapter;
-    private final String TAG = "MainFragment";
+    private LinkedList<Course> courses;
 
 
     public MainFragment() {
+        weightFactor = 0;
+        courses = new LinkedList<Course>();
     }
 
     @Override
@@ -67,7 +72,7 @@ public class MainFragment extends Fragment {
 
         listItems = new ArrayList<String>();
         mGPAListAdapter = new ArrayAdapter<String>(
-                getActivity(), // The current context (this activity)
+                getActivity(), // The current context
                 R.layout.list_item_layout, // The name of the layout ID.
                 R.id.list_item_layout_gpa, // The ID of the textview to populate.
                 listItems);

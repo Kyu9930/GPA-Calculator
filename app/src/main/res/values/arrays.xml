@@ -21,4 +21,25 @@
         <item>0.5</item>
         <item>1.0</item>
     </string-array>
+
+
+    <string-array name="gpa_data_array">
+        <item>90 – 100 |  A+  |  4.0</item>
+        <item>85 – 89  |  A   |  4.0</item>
+        <item>80 – 84  |  A-  |  3.7</item>
+        <item>77 – 79  |  B+  |  3.3</item>
+        <item>73 – 76  |  B   |  3.0</item>
+        <item>70 – 72  |  B-  |  2.7</item>
+        <item>67 – 69  |  C+  |  2.3</item>
+        <item>63 – 66  |  C   |  2.0</item>
+        <item>60 – 62  |  C-  |  1.7</item>
+        <item>57 – 59  |  D+  |  1.3</item>
+        <item>53 – 56  |  D   |  1.0</item>
+        <item>50 – 52  |  D-  |  0.7</item>
+        <item>0 – 49   |  F   |  0.0</item>
+
+
+    </string-array>
+
+
 </resources>

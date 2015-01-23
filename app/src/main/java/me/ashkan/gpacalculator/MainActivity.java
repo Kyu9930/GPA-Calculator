@@ -1,13 +1,16 @@
 package me.ashkan.gpacalculator;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
 public class MainActivity extends ActionBarActivity {
+    private final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +40,43 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            startActivity(new Intent(this, GPAActivity.class));
+            Intent intent = new Intent(this, GpaActivity.class);
+            intent.addFlags((Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
+            startActivity(intent);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.i(TAG, "onStart()");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i(TAG, "onResume()");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.i(TAG, "onPause()");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.i(TAG, "onStop()");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.i(TAG, "onDestroy()");
     }
 }
