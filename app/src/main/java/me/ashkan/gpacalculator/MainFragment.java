@@ -21,14 +21,12 @@ import java.util.LinkedList;
 public class MainFragment extends Fragment {
     private final String TAG = "MainFragment";
 
-    private int weightFactor;
     private ArrayList<String> listItems;
     private ArrayAdapter<String> mGPAListAdapter;
     private LinkedList<Course> courses;
 
 
     public MainFragment() {
-        weightFactor = 0;
         courses = new LinkedList<Course>();
     }
 
@@ -87,15 +85,20 @@ public class MainFragment extends Fragment {
             public void onClick(View v) {
 
 
-                String courseCode = courseCodeTextView.getText().toString();
-                double gpaWeight = Double.parseDouble(gpaWeightSpinner.getSelectedItem().toString());
+                String courseCode = courseCodeTextView.getText().toString().toUpperCase();
+                double gpaWeight = Double.parseDouble(gpaWeightSpinner.getSelectedItem().toString()) * 2;
                 String gpaPercentage = gpaPercentageSpinner.getSelectedItem().toString();
                 double gpaValue = findGpaValue(gpaPercentage);
-                double currentGpa = Double.parseDouble(gpaTextView.getText().toString().substring(5));
-                String textToAdd = courseCode + " - " + gpaValue;
+                String textToAdd;
+                if (gpaWeight != 0)
+                    textToAdd = courseCode + " - " + gpaValue;
+                else
+                    textToAdd = courseCode + " - " + gpaValue + " (CR/NCR)";
 
 
-                gpaTextView.setText("GPA: " + String.valueOf(updateGpa(gpaValue, currentGpa, gpaWeight)));
+                courses.add(new Course(courseCode, gpaWeight, gpaValue));
+
+                gpaTextView.setText("GPA: " + String.valueOf(updatedGpa()));
 
                 // Add the new course to the list and update the Spinner
                 listItems.add(textToAdd);
@@ -131,6 +134,7 @@ public class MainFragment extends Fragment {
                                         Log.i(TAG, "ListView Item Position: " + position);
                                         Log.i(TAG, "ListView Item: " + mGPAListAdapter.getItem(position));
                                         mGPAListAdapter.remove(mGPAListAdapter.getItem(position));
+                                        courses.remove(position);
                                     } catch (Exception e) {
                                         //Temporary fix to SwipeDismissListViewTouchListener
                                         // index of out bounds exception error.
@@ -139,6 +143,7 @@ public class MainFragment extends Fragment {
                                     }
                                 }
                                 mGPAListAdapter.notifyDataSetChanged();
+                                gpaTextView.setText("GPA: " + String.valueOf(updatedGpa()));
                             }
                         });
         myCoursesListView.setOnTouchListener(touchListener);
@@ -191,21 +196,31 @@ public class MainFragment extends Fragment {
 
 
     /**
-     * Update the GPA given a new GPA value and course weight
+     * Update the GPA based on the contents in the list of coursesk
      *
-     * @param gpaValue   The GPA value of the given course
-     * @param currentGpa The current GPA
-     * @param gpaWeight  The weight of the course (0.5 or 1.0)
-     * @return the current GPA with the next GPA value added (rounded to 2 decimal places)
+     * @return the updated gpa value
      */
-    public double updateGpa(double gpaValue, double currentGpa, double gpaWeight) {
-        double tempGrade = (gpaValue * gpaWeight * 2) + (currentGpa * weightFactor);
+    public double updatedGpa() {
+        for (Course course : courses) {
+            Log.i("TAG", "course: " + course.getCourseCode() + " GPA: " + course.getGpaValue() + " weight: " + course.getGpaWeight());
+        }
+        double totalGpa = 0;
+        int totalWeight = 0;
+        for (Course course : courses) {
+            if (course.getGpaWeight() == 2) {
+                totalGpa += course.getGpaValue() * 2;
+                totalWeight += 2;
+            } else if (course.getGpaWeight() == 1) {
+                totalGpa += course.getGpaValue();
+                totalWeight++;
+            }
+        }
+        Log.i("TAG", "Total GPA: " + totalGpa);
+        Log.i("TAG", "Total Weight: " + totalWeight);
+        Log.i("TAG", "---------");
 
-        if (gpaWeight == 0.5)
-            weightFactor++;
-        else if (gpaWeight == 1.0)
-            weightFactor += 2;
-        return (Math.round((tempGrade / weightFactor) * 100.0) / 100.0);
-
+        if (totalWeight > 0)
+            return Math.round((totalGpa / totalWeight) * 100.0) / 100.0;
+        return 0;
     }
 }
