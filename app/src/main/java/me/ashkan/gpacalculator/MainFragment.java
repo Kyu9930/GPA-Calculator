@@ -1,13 +1,16 @@
 package me.ashkan.gpacalculator;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -150,6 +153,16 @@ public class MainFragment extends Fragment {
         // Setting this scroll listener is required to ensure that during ListView scrolling,
         // we don't look for swipes.
         myCoursesListView.setOnScrollListener(touchListener.makeScrollListener());
+
+        myCoursesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), CourseDialogActivity.class);
+                intent.addFlags((Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
+                startActivity(intent);
+
+            }
+        });
 
 
         return rootView;

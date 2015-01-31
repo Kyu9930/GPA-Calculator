@@ -17,7 +17,7 @@
     </string-array>
 
     <string-array name="weight_array">
-        <item>0.0</item>
+        <item>CR/NCR</item>
         <item>0.5</item>
         <item>1.0</item>
     </string-array>

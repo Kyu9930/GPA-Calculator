@@ -11,6 +11,7 @@
     <string name="title_activity_main_fragment">MainFragment</string>
     <string name="title_activity_gpa_activity">GPAActivity</string>
     <string name="default_gpa">GPA: 0.0</string>
-
+    <string name="title_activity_course_detail_dialog_fragment">CourseDetailDialogFragment</string>
+    <string name="title_activity_course_dialog">CourseDialogActivity</string>
 
 </resources>
