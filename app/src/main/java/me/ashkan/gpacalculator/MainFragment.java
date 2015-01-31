@@ -3,7 +3,6 @@ package me.ashkan.gpacalculator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -16,6 +15,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -92,19 +92,21 @@ public class MainFragment extends Fragment {
                 double gpaWeight = Double.parseDouble(gpaWeightSpinner.getSelectedItem().toString()) * 2;
                 String gpaPercentage = gpaPercentageSpinner.getSelectedItem().toString();
                 double gpaValue = findGpaValue(gpaPercentage);
-                String textToAdd;
-                if (gpaWeight != 0)
-                    textToAdd = courseCode + " - " + gpaValue;
+
+                if (courseCode.equals("")) {
+                    displayToast("Enter course code");
+                    return;
+                }
+
+                if (gpaPercentage.equals("CR/NCR"))
+                    courses.add(new Course(courseCode, gpaWeight, gpaValue, true));
                 else
-                    textToAdd = courseCode + " - " + gpaValue + " (CR/NCR)";
-
-
-                courses.add(new Course(courseCode, gpaWeight, gpaValue));
+                    courses.add(new Course(courseCode, gpaWeight, gpaValue, false));
 
                 gpaTextView.setText("GPA: " + String.valueOf(updatedGpa()));
 
                 // Add the new course to the list and update the Spinner
-                listItems.add(textToAdd);
+                listItems.add(courseCode);
                 mGPAListAdapter.notifyDataSetChanged();
 
                 // Clear the EditText text
@@ -157,8 +159,9 @@ public class MainFragment extends Fragment {
         myCoursesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.i(TAG, "ListView Position: " + position);
                 Intent intent = new Intent(getActivity(), CourseDialogActivity.class);
-                intent.addFlags((Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
+                intent.putExtra("Course", courses.get(position));
                 startActivity(intent);
 
             }
@@ -199,6 +202,10 @@ public class MainFragment extends Fragment {
     public double findGpaValue(String givenPercentage) {
         double[] gpaArray = {4.0, 4.0, 3.7, 3.3, 3.0, 2.7, 2.3, 2.0, 1.7, 1.3, 1.0, 0.7, 0.0};
         String[] percentageArray = {"90–100", "85–89", "80–84", "77–79", "73–76", "70–72", "67–69", "63–66", "60–62", "57–59", "53–56", "50–52", "0–49"};
+
+        if (givenPercentage.equals("CR/NCR"))
+            return -1;
+
         for (int index = 0; index < gpaArray.length; index++)
             if (givenPercentage.equals(percentageArray[index]))
                 return gpaArray[index];
@@ -220,10 +227,10 @@ public class MainFragment extends Fragment {
         double totalGpa = 0;
         int totalWeight = 0;
         for (Course course : courses) {
-            if (course.getGpaWeight() == 2) {
+            if (course.getGpaWeight() == 2 && !course.isCreditNoCredit()) {
                 totalGpa += course.getGpaValue() * 2;
                 totalWeight += 2;
-            } else if (course.getGpaWeight() == 1) {
+            } else if (course.getGpaWeight() == 1 && !course.isCreditNoCredit()) {
                 totalGpa += course.getGpaValue();
                 totalWeight++;
             }
@@ -235,5 +242,14 @@ public class MainFragment extends Fragment {
         if (totalWeight > 0)
             return Math.round((totalGpa / totalWeight) * 100.0) / 100.0;
         return 0;
+    }
+
+    /**
+     * Display a toast message
+     *
+     * @param message The message to display
+     */
+    public void displayToast(String message) {
+        Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
     }
 }

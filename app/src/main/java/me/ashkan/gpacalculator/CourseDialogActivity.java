@@ -1,80 +1,58 @@
 package me.ashkan.gpacalculator;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
+import android.view.Window;
+import android.widget.TextView;
 
 
 public class CourseDialogActivity extends FragmentActivity {
+    private final String TAG = "CourseDialogActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent i = getIntent();
+        Course course = (Course) i.getSerializableExtra("Course");
+
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_course_dialog);
-        new myFragment().show(getFragmentManager(), "123");
+
+        updateDialog(course);
+
     }
 
+    /**
+     * Update the dialog with the information from the selected course.
+     *
+     * @param course The selected course
+     */
+    public void updateDialog(Course course) {
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_course_dialog, menu);
-        return true;
+        // Get the values from the selected course.
+        String courseCode = course.getCourseCode();
+        String courseGpa = String.valueOf(course.getGpaValue());
+        String courseWeight = String.valueOf(course.getGpaWeight() / 2);
+
+
+        final TextView CourseCodeTextView = (TextView) findViewById(R.id.course_code);
+        final TextView CourseGpaTextView = (TextView) findViewById(R.id.gpa);
+        final TextView CourseWeightTextView = (TextView) findViewById(R.id.course_weight);
+
+        if (courseGpa.equals("-1.0"))
+            courseGpa = "CR/NCR";
+
+        Log.i(TAG, "Course GPA: " + courseGpa);
+        Log.i(TAG, "Course Weight: " + courseWeight);
+
+        CourseCodeTextView.setText(courseCode);
+        CourseGpaTextView.setText("GPA: " + courseGpa);
+        CourseWeightTextView.setText("Course Weight: " + courseWeight);
+
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    class myFragment extends DialogFragment {
-
-        Context mContext;
-
-        public myFragment() {
-            mContext = getActivity();
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mContext);
-            alertDialogBuilder.setTitle("Really?");
-            alertDialogBuilder.setMessage("Are you sure?");
-            //null should be your on click listener
-            alertDialogBuilder.setPositiveButton("OK", null);
-            alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-
-
-            return alertDialogBuilder.create();
-        }
-    }
 }
